@@ -832,13 +832,25 @@
     Picker.open({
       title:"Choisir un héros", portrait:true, value:draft.heroes[i].char,
       items:(DATA.personnages||[]).map(c=>({value:c.id, name:c.name, file:c.file})),
-      onSelect:v=>{ draft.heroes[i].char = v; renderBuilder(); }
+      onSelect:v=>{
+        const hero = draft.heroes[i];
+        hero.char = v;
+        if(!isWeaponCompatible(hero.char, hero.weapon)) hero.weapon = null;
+        renderBuilder();
+      }
     });
   }
   function pickWeapon(i){
+    const hero = draft.heroes[i];
+    if(!hero.char){
+      toast("Choisis d'abord un héros.", true);
+      return;
+    }
     Picker.open({
-      title:"Choisir une arme", value:draft.heroes[i].weapon, groups:DATA.armes,
-      onSelect:v=>{ draft.heroes[i].weapon = v; renderBuilder(); }
+      title:"Choisir une arme", value:hero.weapon,
+      groups:compatibleWeaponGroups(hero.char),
+      emptyHint:"Aucune arme compatible disponible.",
+      onSelect:v=>{ hero.weapon = v; renderBuilder(); }
     });
   }
   function pickArmor(i, slot){
