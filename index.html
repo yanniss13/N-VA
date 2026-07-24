@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confrérie 7DS — Équipes du Boss de Guilde</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --obsidian:#0e0d12;
+    --obsidian-2:#14121b;
+    --panel:#1b1922;
+    --panel-2:#221f2b;
+    --line:#332e40;
+    --line-soft:#2a2633;
+    --gold:#d9a441;
+    --gold-bright:#f0c674;
+    --gold-deep:#a97e2c;
+    --crimson:#a12c2c;
+    --crimson-bright:#c0392b;
+    --parchment:#e8e0d0;
+    --muted:#9a9182;
+    --muted-2:#6f6960;
+    --ink:#141019;
+    --ok:#4c9a5a;
+    --radius:10px;
+    --shadow:0 14px 40px rgba(0,0,0,.55);
+    --display:"Cinzel","Constantia","Palatino Linotype","Book Antiqua",Georgia,serif;
+    --ui:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:var(--ui);
+    color:var(--parchment);
+    background:
+      radial-gradient(1200px 600px at 50% -200px, rgba(217,164,65,.10), transparent 60%),
+      radial-gradient(900px 500px at 100% 100%, rgba(161,44,44,.10), transparent 55%),
+      var(--obsidian);
+    min-height:100vh;
+  }
+  a{color:var(--gold-bright)}
+
+  /* ---------- Topbar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:40;
+    display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+    padding:14px clamp(16px,4vw,40px);
+    background:linear-gradient(180deg, rgba(20,18,27,.96), rgba(20,18,27,.82));
+    border-bottom:1px solid var(--line);
+    backdrop-filter:blur(8px);
+  }
+  .brand{display:flex;align-items:center;gap:14px;margin-right:auto}
+  .crest{
+    width:44px;height:44px;flex:none;display:grid;place-items:center;
+    border:1px solid var(--gold-deep);border-radius:50%;
+    background:radial-gradient(circle at 50% 30%, #241d13, #0f0c07);
+    box-shadow:inset 0 0 12px rgba(217,164,65,.25);
+    color:var(--gold-bright);font-family:var(--display);font-weight:700;font-size:19px;
+  }
+  .brand-txt{display:flex;flex-direction:column;line-height:1.05}
+  .brand-title{
+    font-family:var(--display);font-weight:700;letter-spacing:.14em;
+    text-transform:uppercase;font-size:clamp(15px,2.4vw,20px);
+    color:var(--parchment);
+  }
+  .brand-sub{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+
+  .tabs{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);
+    border-radius:999px;padding:5px}
+  .tab{
+    appearance:none;border:0;cursor:pointer;font-family:var(--ui);
+    padding:9px 18px;border-radius:999px;background:transparent;color:var(--muted);
+    font-weight:600;font-size:13.5px;letter-spacing:.03em;transition:.18s;
+  }
+  .tab:hover{color:var(--parchment)}
+  .tab.active{
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+    color:var(--ink);box-shadow:0 4px 14px rgba(217,164,65,.28);
+  }
+
+  main{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,40px)}
+  .view{display:none;animation:fade .25s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .section-eyebrow{
+    font-family:var(--display);letter-spacing:.28em;text-transform:uppercase;
+    font-size:12px;color:var(--gold);margin:0 0 4px
+  }
+  .section-title{
+    font-family:var(--display);font-weight:700;letter-spacing:.05em;
+    font-size:clamp(22px,4vw,32px);margin:0;color:var(--parchment)
+  }
+  .section-lead{color:var(--muted);margin:8px 0 0;max-width:60ch;font-size:14.5px}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    appearance:none;cursor:pointer;font-family:var(--ui);font-weight:600;font-size:14px;
+    border-radius:8px;padding:10px 16px;border:1px solid var(--line);
+    background:var(--panel-2);color:var(--parchment);transition:.16s;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn:hover{border-color:var(--gold-deep);color:var(--gold-bright)}
+  .btn-primary{
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+    color:var(--ink);border-color:var(--gold-deep);font-weight:700;
+  }
+  .btn-primary:hover{filter:brightness(1.06);color:var(--ink)}
+  .btn-danger:hover{border-color:var(--crimson);color:#e98d8d}
+  .btn-ghost{background:transparent}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn:focus-visible,.tab:focus-visible,.tile:focus-visible,.gear-slot:focus-visible,
+  .portrait:focus-visible,input:focus-visible,textarea:focus-visible{
+    outline:2px solid var(--gold-bright);outline-offset:2px
+  }
+
+  /* ---------- Builder ---------- */
+  .metabar{
+    display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin:22px 0;
+  }
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .field input{
+    font-family:var(--ui);font-size:15px;color:var(--parchment);
+    background:var(--obsidian-2);border:1px solid var(--line);border-radius:8px;
+    padding:11px 13px;min-width:240px;
+  }
+  .metabar .grow{margin-left:auto;display:flex;gap:10px}
+  .edit-flag{
+    display:none;align-items:center;gap:8px;font-size:13px;color:var(--gold-bright);
+    background:rgba(217,164,65,.1);border:1px solid var(--gold-deep);
+    padding:6px 12px;border-radius:999px;
+  }
+  .edit-flag.on{display:inline-flex}
+
+  .hero-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+  }
+  .hero{
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);border-radius:14px;padding:14px;
+    display:flex;flex-direction:column;gap:12px;position:relative;
+  }
+  .hero-index{
+    position:absolute;top:10px;left:12px;font-family:var(--display);font-size:12px;
+    letter-spacing:.2em;color:var(--muted-2)
+  }
+  .portrait{
+    appearance:none;border:1px solid var(--line);cursor:pointer;
+    aspect-ratio:1/1;border-radius:10px;overflow:hidden;padding:0;position:relative;
+    background:var(--obsidian-2) center/cover no-repeat;color:var(--muted);
+    display:grid;place-items:center;transition:.16s;
+  }
+  .portrait:hover{border-color:var(--gold-deep)}
+  .portrait img{width:100%;height:100%;object-fit:cover;display:block}
+  .portrait .ph{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px}
+  .portrait .ph .plus{font-size:30px;line-height:1;color:var(--gold)}
+  .hero-title{
+    text-align:center;font-family:var(--display);font-weight:600;font-size:15px;
+    letter-spacing:.03em;min-height:20px;color:var(--parchment)
+  }
+  .hero-title.empty{color:var(--muted-2);font-style:italic;font-family:var(--ui);font-weight:400}
+
+  .gear{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .gear-slot{
+    appearance:none;cursor:pointer;border:1px solid var(--line-soft);border-radius:9px;
+    background:var(--obsidian-2);padding:6px 4px 5px;display:flex;flex-direction:column;
+    align-items:center;gap:4px;transition:.16s;color:var(--muted)
+  }
+  .gear-slot:hover{border-color:var(--gold-deep)}
+  .gear-slot.filled{border-color:var(--gold-deep)}
+  .gear-slot.weapon{grid-column:1 / -1;flex-direction:row;justify-content:center;padding:7px}
+  .gear-thumb{
+    width:38px;height:38px;border-radius:7px;background:#0b0910 center/cover no-repeat;
+    display:grid;place-items:center;font-size:18px;color:var(--muted-2);flex:none;
+    border:1px solid var(--line-soft)
+  }
+  .gear-slot.weapon .gear-thumb{width:34px;height:34px}
+  .gear-thumb img{width:100%;height:100%;object-fit:contain}
+  .gear-label{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;line-height:1.1;text-align:center}
+  .gear-slot.weapon .gear-label{font-size:11px}
+  .gear-group{
+    grid-column:1 / -1;font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted-2);margin:3px 0 -3px;padding-left:2px
+  }
+  .gear-slot.jewel.filled{border-color:var(--crimson)}
+  .gear-slot.jewel .gear-thumb{border-color:rgba(161,44,44,.4)}
+
+  .note{
+    font-family:var(--ui);font-size:13px;color:var(--parchment);resize:vertical;
+    background:var(--obsidian-2);border:1px solid var(--line);border-radius:8px;
+    padding:9px 11px;min-height:52px;width:100%;
+  }
+  .note::placeholder{color:var(--muted-2)}
+  .hero .clear{
+    align-self:flex-end;background:transparent;border:0;color:var(--muted-2);
+    font-size:12px;cursor:pointer;padding:2px 4px
+  }
+  .hero .clear:hover{color:#e98d8d}
+
+  /* ---------- Roster ---------- */
+  .roster-toolbar{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:20px 0 26px
+  }
+  .roster-count{
+    font-size:13px;color:var(--muted);margin-right:auto;
+    letter-spacing:.04em
+  }
+  .roster-count b{color:var(--gold-bright);font-family:var(--display)}
+  .roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+
+  .team{
+    position:relative;background:
+      linear-gradient(180deg,var(--panel),var(--obsidian-2));
+    border:1px solid var(--line);border-radius:14px;padding:18px;
+    box-shadow:var(--shadow);
+  }
+  .team::before{
+    content:"";position:absolute;inset:6px;border:1px solid rgba(217,164,65,.14);
+    border-radius:9px;pointer-events:none
+  }
+  .team-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;position:relative}
+  .seal{
+    width:46px;height:46px;flex:none;border-radius:50%;display:grid;place-items:center;
+    background:radial-gradient(circle at 50% 35%, #3a2c15, #17110a);
+    border:1px solid var(--gold-deep);color:var(--gold-bright);
+    font-family:var(--display);font-weight:700;font-size:16px;
+    box-shadow:inset 0 0 10px rgba(217,164,65,.3)
+  }
+  .team-who{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+  .team-pseudo{
+    font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.03em;
+    color:var(--parchment);white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  }
+  .team-date{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
+
+  .team-heroes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .mini{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center}
+  .mini-portrait{
+    width:100%;aspect-ratio:1/1;border-radius:9px;overflow:hidden;
+    background:#0b0910 center/cover no-repeat;border:1px solid var(--line);
+    display:grid;place-items:center;color:var(--muted-2);font-size:20px
+  }
+  .mini-portrait img{width:100%;height:100%;object-fit:cover}
+  .mini-name{font-size:11px;color:var(--parchment);line-height:1.15;min-height:26px;
+    display:flex;align-items:center;justify-content:center}
+  .mini-name.empty{color:var(--muted-2)}
+  .mini-gear{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;
+    align-items:flex-start;align-content:flex-start}
+  .icn{
+    flex:none;box-sizing:border-box;
+    width:22px;height:22px;border-radius:5px;background:#0b0910 center/contain no-repeat;
+    border:1px solid var(--line-soft);
+  }
+  .icn.weapon{border-color:var(--gold-deep)}
+  .icn.jewel{border-color:rgba(161,44,44,.55)}
+  .icn.empty{opacity:.28}
+  .mini-note{
+    font-size:10.5px;color:var(--muted);font-style:italic;line-height:1.25;
+    margin-top:2px;word-break:break-word
+  }
+  .team-actions{display:flex;gap:8px;margin-top:16px;position:relative}
+  .team-actions .btn{padding:8px 14px;font-size:13px;flex:1;justify-content:center}
+
+  .empty-state{
+    text-align:center;padding:64px 20px;border:1px dashed var(--line);
+    border-radius:14px;color:var(--muted)
+  }
+  .empty-state .big{font-family:var(--display);font-size:20px;color:var(--parchment);margin:0 0 8px}
+
+  /* ---------- Picker modal ---------- */
+  .overlay{
+    position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;
+    background:rgba(6,5,9,.72);backdrop-filter:blur(4px);padding:18px
+  }
+  .overlay.on{display:flex}
+  .modal{
+    width:min(760px,100%);max-height:88vh;display:flex;flex-direction:column;
+    background:var(--panel);border:1px solid var(--gold-deep);border-radius:14px;
+    box-shadow:var(--shadow);overflow:hidden
+  }
+  .picker-head{
+    display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)
+  }
+  .picker-title{font-family:var(--display);font-weight:600;letter-spacing:.06em;font-size:17px;margin-right:auto}
+  .icon-btn{
+    appearance:none;border:1px solid var(--line);background:var(--panel-2);color:var(--muted);
+    width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1
+  }
+  .icon-btn:hover{color:var(--gold-bright);border-color:var(--gold-deep)}
+  .picker-tools{padding:12px 18px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line-soft)}
+  .picker-search{
+    font-family:var(--ui);font-size:14px;color:var(--parchment);width:100%;
+    background:var(--obsidian-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px
+  }
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{
+    appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--panel-2);
+    color:var(--muted);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;transition:.14s
+  }
+  .chip:hover{color:var(--parchment)}
+  .chip.active{background:var(--gold);color:var(--ink);border-color:var(--gold-deep)}
+  .picker-grid{
+    padding:16px 18px;overflow:auto;display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px
+  }
+  .tile{
+    appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--obsidian-2);
+    border-radius:9px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;
+    transition:.14s;color:var(--parchment)
+  }
+  .tile:hover{border-color:var(--gold-deep);transform:translateY(-2px)}
+  .tile.selected{border-color:var(--gold-bright);box-shadow:0 0 0 1px var(--gold-bright) inset}
+  .tile-img{
+    width:100%;aspect-ratio:1/1;border-radius:6px;background:#0b0910 center/contain no-repeat;
+    display:grid;place-items:center;font-size:22px;color:var(--muted-2)
+  }
+  .tile-img img{width:100%;height:100%;object-fit:contain}
+  .tile.portrait-tile .tile-img img{object-fit:cover}
+  .tile-name{font-size:11px;line-height:1.2;text-align:center;color:var(--parchment);word-break:break-word}
+  .tile.none .tile-img{border:1px dashed var(--line);color:var(--muted-2)}
+  .picker-empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:30px}
+
+  /* ---------- Potentiel : bouton carte héros ---------- */
+  .pot-btn{
+    appearance:none;cursor:pointer;width:100%;display:flex;align-items:center;gap:8px;
+    border:1px solid var(--line-soft);background:var(--obsidian-2);border-radius:9px;
+    padding:8px 11px;color:var(--muted);transition:.16s;text-align:left
+  }
+  .pot-btn:hover{border-color:var(--gold-deep);color:var(--parchment)}
+  .pot-btn.set{border-color:var(--gold-deep)}
+  .pot-btn.set .pot-val{color:var(--gold-bright)}
+  .pot-btn.disabled{opacity:.5;cursor:not-allowed}
+  .pot-star{color:var(--gold);font-size:13px}
+  .pot-lbl{font-size:10px;letter-spacing:.16em;text-transform:uppercase;flex:1}
+  .pot-val{font-family:var(--display);font-weight:600;font-size:13px;color:var(--muted)}
+
+  /* ---------- Potentiel : modal ---------- */
+  .potmodal{width:min(720px,100%)}
+  .pot-body{padding:14px 18px 18px;overflow:auto}
+  .pot-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+  .pot-head-lbl{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .pot-head-val{font-family:var(--display);font-weight:700;color:var(--gold-bright)}
+  .pot-paliers{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:18px}
+  .pot-p{
+    appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--obsidian-2);
+    color:var(--muted);border-radius:7px;padding:8px 0;min-width:44px;flex:1;
+    font-family:var(--display);font-weight:600;font-size:13px;transition:.13s
+  }
+  .pot-p:hover{border-color:var(--gold-deep);color:var(--parchment)}
+  .pot-p.reached{color:var(--gold-bright);border-color:var(--gold-deep)}
+  .pot-p.active{background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:var(--ink);border-color:var(--gold-deep)}
+  .pot-list-title{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .pot-list{display:flex;flex-direction:column;gap:6px}
+  .pot-item{
+    display:flex;gap:12px;padding:11px 13px;border:1px solid var(--line-soft);
+    border-radius:8px;background:var(--obsidian-2);opacity:.55;transition:.16s
+  }
+  .pot-item.on{opacity:1;border-color:var(--gold-deep);background:rgba(217,164,65,.06)}
+  .pot-item-t{font-family:var(--display);font-weight:700;color:var(--gold-bright);flex:none;min-width:30px}
+  .pot-item-d{font-size:13px;line-height:1.45;color:var(--parchment)}
+  .pot-empty{
+    padding:18px;border:1px dashed var(--line);border-radius:9px;
+    background:var(--obsidian-2);color:var(--muted);font-size:13px;text-align:center
+  }
+
+  .mini-pot{
+    font-size:10px;letter-spacing:.04em;color:var(--gold-bright);font-weight:600;
+    border:1px solid var(--gold-deep);border-radius:999px;padding:1px 8px;margin-top:2px
+  }
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:var(--panel-2);border:1px solid var(--gold-deep);color:var(--parchment);
+    padding:12px 20px;border-radius:10px;box-shadow:var(--shadow);z-index:80;
+    opacity:0;pointer-events:none;transition:.25s;font-size:14px;max-width:90vw
+  }
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.err{border-color:var(--crimson)}
+
+  .databar{
+    text-align:center;color:var(--muted-2);font-size:11.5px;letter-spacing:.06em;
+    margin-top:34px;padding-top:16px;border-top:1px solid var(--line-soft)
+  }
+
+  /* ---------- Responsive ---------- */
+  @media(max-width:900px){
+    .hero-grid{grid-template-columns:repeat(2,1fr)}
+    .team-heroes{grid-template-columns:repeat(4,1fr)}
+  }
+  @media(max-width:560px){
+    .hero-grid{grid-template-columns:1fr}
+    .team-heroes{grid-template-columns:repeat(2,1fr)}
+    .metabar .grow{margin-left:0;width:100%}
+    .metabar .grow .btn{flex:1;justify-content:center}
+    .roster-grid{grid-template-columns:1fr}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="crest">7</div>
+    <div class="brand-txt">
+      <span class="brand-title">Confrérie 7DS</span>
+      <span class="brand-sub">Team Builder · Boss de Guilde</span>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-view="builder" role="tab">Créer une équipe</button>
+    <button class="tab" data-view="roster" role="tab">Boss de Guilde</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ BUILDER ============ -->
+  <section id="view-builder" class="view active">
+    <p class="section-eyebrow">Forge des équipes</p>
+    <h1 class="section-title">Composer une équipe</h1>
+    <p class="section-lead">Assigne 4 héros, leur arme et leurs armures, puis enregistre l'équipe pour la rendre disponible face au Boss de Guilde.</p>
+
+    <div class="metabar">
+      <div class="field">
+        <label for="pseudo">Pseudo du membre</label>
+        <input id="pseudo" type="text" placeholder="Ton pseudo en jeu" autocomplete="off" maxlength="40">
+      </div>
+      <span class="edit-flag" id="editFlag">✎ Modification en cours</span>
+      <div class="grow">
+        <button class="btn btn-ghost" id="btnNew">Nouvelle équipe</button>
+        <button class="btn btn-primary" id="btnSave">Enregistrer l'équipe</button>
+      </div>
+    </div>
+
+    <div class="hero-grid" id="heroGrid"></div>
+  </section>
+
+  <!-- ============ ROSTER ============ -->
+  <section id="view-roster" class="view">
+    <p class="section-eyebrow">Registre de la confrérie</p>
+    <h1 class="section-title">Équipes dispo pour le Boss de Guilde</h1>
+    <p class="section-lead">Toutes les équipes proposées par les membres. Modifie ou retire les tiennes à tout moment.</p>
+
+    <div class="roster-toolbar">
+      <span class="roster-count" id="rosterCount"></span>
+      <button class="btn" id="btnExport">Exporter (JSON)</button>
+      <button class="btn" id="btnImport">Importer (JSON)</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+
+    <div id="rosterGrid"></div>
+  </section>
+
+  <p class="databar" id="databar"></p>
+</main>
+
+<!-- Picker modal -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+  <div class="modal">
+    <div class="picker-head">
+      <span class="picker-title" id="pickerTitle">Choisir</span>
+      <button class="icon-btn" id="pickerClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="picker-tools">
+      <input type="text" class="picker-search" id="pickerSearch" placeholder="Rechercher…" autocomplete="off">
+      <div class="chips" id="pickerChips"></div>
+    </div>
+    <div class="picker-grid" id="pickerGrid"></div>
+  </div>
+</div>
+
+<!-- Potentiel modal -->
+<div class="overlay" id="potOverlay" role="dialog" aria-modal="true" aria-labelledby="potTitle">
+  <div class="modal potmodal">
+    <div class="picker-head">
+      <span class="picker-title" id="potTitle">Potentiel</span>
+      <button class="icon-btn" id="potClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="pot-body" id="potBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script src="potentiels.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ============================ Données & constantes ============================ */
+  const DATA = window.SEVEN_DS_DATA;
+  const STORAGE_KEY = "confrerie7ds.teams";
+  const TEAM_SIZE = 4;
+  const ARMOR_SLOTS = ["Haut","Bas","Bottes","Ceinture","Armure liee"];
+  const ARMOR_LABELS = {
+    "Haut":"Haut","Bas":"Bas","Bottes":"Bottes",
+    "Ceinture":"Ceinture","Armure liee":"Armure liée"
+  };
+  const JEWEL_SLOTS = ["Anneau","Collier","Boucle d'oreille"];
+  const JEWEL_LABELS = {
+    "Anneau":"Anneau","Collier":"Collier","Boucle d'oreille":"B. oreille"
+  };
+  const POT = window.SEVEN_DS_POTENTIELS || {};
+  const POT_MAX = 10;
+  const weaponFolderOf = file => file ? file.split("/")[1] : null;
+  const potTypesOf = charId => Object.keys((charId && POT[charId]) || {});
+  function potentielDetailsOf(hero){
+    const weaponType = weaponFolderOf(hero && hero.weapon);
+    const byWeapon = (hero && hero.char && POT[hero.char]) || {};
+    return { weaponType, list:(weaponType && byWeapon[weaponType]) || [] };
+  }
+
+  if(!DATA){
+    document.getElementById("heroGrid").innerHTML =
+      '<div class="empty-state"><p class="big">data.js introuvable</p>' +
+      '<p>Lance <b>generate-data.ps1</b> puis recharge la page.</p></div>';
+    return;
+  }
+
+  // Index de recherche : chemin de fichier -> nom lisible
+  const FILE_NAME = new Map();
+  Object.values(DATA.armes||{}).forEach(list => list.forEach(w => FILE_NAME.set(w.file, w.name)));
+  Object.values(DATA.armures||{}).forEach(list => list.forEach(a => FILE_NAME.set(a.file, a.name)));
+  Object.values(DATA.bijoux||{}).forEach(list => list.forEach(b => FILE_NAME.set(b.file, b.name)));
+  const CHAR_BY_ID = new Map((DATA.personnages||[]).map(c => [c.id, c]));
+
+  const nameOfFile = f => FILE_NAME.get(f) || (f ? f.split("/").pop().replace(/\.webp$/i,"") : "");
+  const charOf = id => CHAR_BY_ID.get(id) || null;
+
+  /* ============================ Utilitaires ============================ */
+  const $ = sel => document.querySelector(sel);
+  const uid = () => (crypto.randomUUID ? crypto.randomUUID()
+                    : "t"+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
+  const norm = s => (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+  const initials = s => {
+    const t = (s||"").trim();
+    if(!t) return "?";
+    const parts = t.split(/\s+/);
+    return (parts.length>1 ? parts[0][0]+parts[1][0] : t.slice(0,2)).toUpperCase();
+  };
+  function el(tag, props, kids){
+    const n = document.createElement(tag);
+    if(props) for(const k in props){
+      if(k==="class") n.className = props[k];
+      else if(k==="text") n.textContent = props[k];
+      else if(k==="html") n.innerHTML = props[k];
+      else if(k.startsWith("on")) n.addEventListener(k.slice(2), props[k]);
+      else if(k==="dataset") Object.assign(n.dataset, props[k]);
+      else n.setAttribute(k, props[k]);
+    }
+    (kids||[]).forEach(c => c!=null && n.appendChild(typeof c==="string" ? document.createTextNode(c) : c));
+    return n;
+  }
+
+  /* ============================ Store (localStorage) ============================ */
+  const Store = {
+    all(){
+      try{
+        const list = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        return Array.isArray(list) ? list.map(normalizeTeam) : [];
+      }
+      catch(e){ return []; }
+    },
+    save(list){
+      const normalized = Array.isArray(list) ? list.map(normalizeTeam) : [];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+    },
+    upsert(team){
+      const list = Store.all();
+      const normalized = normalizeTeam(team);
+      const i = list.findIndex(t => t.id === normalized.id);
+      if(i>=0) list[i] = normalized; else list.push(normalized);
+      Store.save(list);
+    },
+    remove(id){ Store.save(Store.all().filter(t => t.id !== id)); }
+  };
+
+  /* ============================ Brouillon d'équipe ============================ */
+  const emptyArmor = () => ARMOR_SLOTS.reduce((o,s)=>(o[s]=null,o),{});
+  const emptyJewel = () => JEWEL_SLOTS.reduce((o,s)=>(o[s]=null,o),{});
+  const emptyPot = () => ({ tier:0 });
+  const normalizePotentiel = raw => {
+    const tier = Number.isFinite(Number(raw && raw.tier)) ? Math.trunc(Number(raw.tier)) : 0;
+    return { tier:Math.max(0, Math.min(POT_MAX, tier)) };
+  };
+  function normalizeHero(raw){
+    const h = raw && typeof raw === "object" ? raw : {};
+    return {
+      char:h.char||null,
+      weapon:h.weapon||null,
+      armor:Object.assign(emptyArmor(), h.armor||{}),
+      jewel:Object.assign(emptyJewel(), h.jewel||{}),
+      potentiel:normalizePotentiel(h.potentiel),
+      note:h.note||""
+    };
+  }
+  function normalizeTeam(raw){
+    const t = raw && typeof raw === "object" ? raw : {};
+    const heroes = Array.isArray(t.heroes) ? t.heroes.slice(0, TEAM_SIZE) : [];
+    while(heroes.length < TEAM_SIZE) heroes.push({});
+    return Object.assign({}, t, { heroes:heroes.map(normalizeHero) });
+  }
+  const emptyHero = () => ({ char:null, weapon:null, armor:emptyArmor(), jewel:emptyJewel(), potentiel:emptyPot(), note:"" });
+  const emptyDraft = () => ({ id:uid(), pseudo:"", boss:"",
+                              heroes:Array.from({length:TEAM_SIZE}, emptyHero) });
+
+  let draft = emptyDraft();
+  let editing = false;
+
+  /* ============================ Toast ============================ */
+  let toastTimer;
+  function toast(msg, isErr){
+    const t = $("#toast");
+    t.textContent = msg;
+    t.classList.toggle("err", !!isErr);
+    t.classList.add("on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove("on"), 2600);
+  }
+
+  /* ============================ Navigation onglets ============================ */
+  function showView(name){
+    document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active", b.dataset.view===name));
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    $("#view-"+name).classList.add("active");
+    if(name==="roster") renderRoster();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+  document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click", ()=>showView(b.dataset.view)));
+
+  /* ============================ Picker réutilisable ============================ */
+  const Picker = (function(){
+    const overlay = $("#overlay"), grid = $("#pickerGrid"), chipsBox = $("#pickerChips"),
+          search = $("#pickerSearch"), titleEl = $("#pickerTitle");
+    let groups=null, flat=null, activeGroup="__all__", current=null, onPick=null, portrait=false, emptyHint="";
+
+    function open(cfg){
+      titleEl.textContent = cfg.title || "Choisir";
+      groups = cfg.groups || null;
+      flat = cfg.items || null;
+      current = cfg.value || null;
+      onPick = cfg.onSelect;
+      portrait = !!cfg.portrait;
+      emptyHint = cfg.emptyHint || "";
+      activeGroup = "__all__";
+      search.value = "";
+      renderChips();
+      renderGrid();
+      overlay.classList.add("on");
+      setTimeout(()=>search.focus(), 30);
+    }
+    function close(){ overlay.classList.remove("on"); onPick=null; }
+
+    function renderChips(){
+      chipsBox.innerHTML = "";
+      if(!groups){ chipsBox.style.display="none"; return; }
+      chipsBox.style.display="flex";
+      const keys = ["__all__", ...Object.keys(groups)];
+      keys.forEach(k=>{
+        chipsBox.appendChild(el("button",{
+          class:"chip"+(k===activeGroup?" active":""),
+          text: k==="__all__" ? "Tous" : k,
+          onclick:()=>{ activeGroup=k; renderChips(); renderGrid(); }
+        }));
+      });
+    }
+
+    function currentItems(){
+      if(flat) return flat;
+      if(activeGroup==="__all__") return Object.values(groups).flat();
+      return groups[activeGroup] || [];
+    }
+
+    function renderGrid(){
+      const q = norm(search.value);
+      const items = currentItems().filter(it => !q || norm(it.name).includes(q));
+      grid.innerHTML = "";
+
+      // Tuile "Aucun"
+      const none = el("button",{class:"tile none",onclick:()=>{ pick(null); }},[
+        el("div",{class:"tile-img",text:"∅"}),
+        el("div",{class:"tile-name",text:"Aucun"})
+      ]);
+      grid.appendChild(none);
+
+      if(!items.length){
+        grid.appendChild(el("div",{class:"picker-empty",
+          text: q ? "Rien trouvé." : (emptyHint || "Aucun élément disponible.")}));
+        return;
+      }
+      items.forEach(it=>{
+        const val = it.value!=null ? it.value : it.file;
+        const tile = el("button",{
+          class:"tile"+(portrait?" portrait-tile":"")+(val===current?" selected":""),
+          title: it.name,
+          onclick:()=>pick(val)
+        },[
+          el("div",{class:"tile-img"},[ el("img",{src:it.file, alt:it.name, loading:"lazy"}) ]),
+          el("div",{class:"tile-name",text:it.name})
+        ]);
+        grid.appendChild(tile);
+      });
+    }
+
+    function pick(val){ if(onPick) onPick(val); close(); }
+
+    search.addEventListener("input", renderGrid);
+    $("#pickerClose").addEventListener("click", close);
+    overlay.addEventListener("click", e=>{ if(e.target===overlay) close(); });
+    document.addEventListener("keydown", e=>{ if(e.key==="Escape" && overlay.classList.contains("on")) close(); });
+
+    return { open };
+  })();
+
+  /* ============================ Builder ============================ */
+  const heroGrid = $("#heroGrid");
+  const pseudoInput = $("#pseudo");
+
+  pseudoInput.addEventListener("input", e => draft.pseudo = e.target.value);
+
+  function renderBuilder(){
+    pseudoInput.value = draft.pseudo || "";
+    $("#editFlag").classList.toggle("on", editing);
+    $("#btnSave").textContent = editing ? "Mettre à jour l'équipe" : "Enregistrer l'équipe";
+    heroGrid.innerHTML = "";
+    draft.heroes.forEach((hero, i) => heroGrid.appendChild(heroCard(hero, i)));
+  }
+
+  function gearThumb(file){
+    const box = el("div",{class:"gear-thumb"});
+    if(file) box.appendChild(el("img",{src:file, alt:"", loading:"lazy"}));
+    else box.textContent = "+";
+    return box;
+  }
+
+  function heroCard(hero, i){
+    const ch = charOf(hero.char);
+
+    // Portrait
+    const portrait = el("button",{class:"portrait", type:"button", title:"Choisir un héros",
+      onclick:()=>pickChar(i)});
+    if(ch){ portrait.appendChild(el("img",{src:ch.file, alt:ch.name})); }
+    else{ portrait.appendChild(el("div",{class:"ph",html:'<span class="plus">+</span><span>Héros</span>'})); }
+
+    const title = el("div",{class:"hero-title"+(ch?"":" empty"), text: ch ? ch.name : "Emplacement libre"});
+
+    // Gear : arme + 5 armures + 3 bijoux
+    const gear = el("div",{class:"gear"});
+    gear.appendChild(gearSlot("Arme", hero.weapon, true, ()=>pickWeapon(i)));
+    gear.appendChild(el("div",{class:"gear-group", text:"Armures"}));
+    ARMOR_SLOTS.forEach(slot=>{
+      gear.appendChild(gearSlot(ARMOR_LABELS[slot], hero.armor[slot], false, ()=>pickArmor(i, slot)));
+    });
+    gear.appendChild(el("div",{class:"gear-group", text:"Bijoux"}));
+    JEWEL_SLOTS.forEach(slot=>{
+      gear.appendChild(gearSlot(JEWEL_LABELS[slot], hero.jewel[slot], false, ()=>pickJewel(i, slot), "jewel"));
+    });
+
+    // Potentiel
+    const pot = potentielControl(hero, i, ch);
+
+    // Note
+    const note = el("textarea",{class:"note", placeholder:"Rôle / notes (ex. tank, burst T2)…",
+      maxlength:"160"});
+    note.value = hero.note || "";
+    note.addEventListener("input", e => hero.note = e.target.value);
+
+    const clear = el("button",{class:"clear", type:"button", text:"Vider ce héros",
+      onclick:()=>{ draft.heroes[i] = emptyHero(); renderBuilder(); }});
+
+    return el("div",{class:"hero"},[
+      el("span",{class:"hero-index", text:"№ "+(i+1)}),
+      portrait, title, gear, pot, note, clear
+    ]);
+  }
+
+  // Petit bloc "Potentiel" sur la carte héros -> ouvre la fenêtre de potentiel
+  function potentielControl(hero, i, ch){
+    const p = hero.potentiel = normalizePotentiel(hero.potentiel);
+    const types = ch ? potTypesOf(ch.id) : [];
+    const disabled = !ch || !types.length;
+    const tierTxt = p.tier > 0 ? ("T" + p.tier) : "—";
+
+    const btn = el("button",{
+      class:"pot-btn"+(p.tier>0?" set":"")+(disabled?" disabled":""),
+      type:"button",
+      title: disabled ? "Choisis d'abord un héros" : "Éditer le potentiel",
+      onclick: ()=>{ if(!disabled) openPotentiel(i); }
+    },[
+      el("span",{class:"pot-star", text:"✦"}),
+      el("span",{class:"pot-lbl", text:"Potentiel"}),
+      el("span",{class:"pot-val", text:disabled ? "—" : tierTxt})
+    ]);
+    return btn;
+  }
+
+  function gearSlot(label, file, isWeapon, onclick, extraClass){
+    return el("button",{
+      class:"gear-slot"+(isWeapon?" weapon":"")+(extraClass?" "+extraClass:"")+(file?" filled":""),
+      type:"button", title:(isWeapon?"Arme":label)+(file?" : "+nameOfFile(file):""), onclick
+    },[
+      gearThumb(file),
+      el("span",{class:"gear-label", text:label})
+    ]);
+  }
+
+  // Pickers spécialisés
+  function pickChar(i){
+    Picker.open({
+      title:"Choisir un héros", portrait:true, value:draft.heroes[i].char,
+      items:(DATA.personnages||[]).map(c=>({value:c.id, name:c.name, file:c.file})),
+      onSelect:v=>{ draft.heroes[i].char = v; renderBuilder(); }
+    });
+  }
+  function pickWeapon(i){
+    Picker.open({
+      title:"Choisir une arme", value:draft.heroes[i].weapon, groups:DATA.armes,
+      onSelect:v=>{ draft.heroes[i].weapon = v; renderBuilder(); }
+    });
+  }
+  function pickArmor(i, slot){
+    Picker.open({
+      title:"Armure — "+ARMOR_LABELS[slot], value:draft.heroes[i].armor[slot],
+      items:(DATA.armures[slot]||[]).map(a=>({value:a.file, name:a.name, file:a.file})),
+      onSelect:v=>{ draft.heroes[i].armor[slot] = v; renderBuilder(); }
+    });
+  }
+  function pickJewel(i, slot){
+    Picker.open({
+      title:"Bijou — "+slot, value:draft.heroes[i].jewel[slot],
+      items:(DATA.bijoux[slot]||[]).map(b=>({value:b.file, name:b.name, file:b.file})),
+      emptyHint:"Aucun bijou pour l'instant. Ajoute des images dans 7ds-bijoux/"+slot+"/ puis relance generate-data.ps1.",
+      onSelect:v=>{ draft.heroes[i].jewel[slot] = v; renderBuilder(); }
+    });
+  }
+
+  /* ---- Potentiel : rendu du balisage couleur [#RRGGBB]texte[-] ---- */
+  function renderBonus(str){
+    const esc = (str||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    return esc
+      .replace(/\[#([0-9A-Fa-f]{6})\]/g, '<span style="color:#$1">')
+      .replace(/\[-\]/g, "</span>")
+      .replace(/\n/g, "<br>");
+  }
+
+  /* ---- Fenêtre Potentiel (façon page de référence) ---- */
+  const Potentiel = (function(){
+    const overlay = $("#potOverlay"), body = $("#potBody"), titleEl = $("#potTitle");
+    let heroIdx = -1;
+
+    function open(i){
+      heroIdx = i;
+      const hero = draft.heroes[i], ch = charOf(hero.char);
+      if(!ch) return;
+      const types = potTypesOf(ch.id);
+      if(!types.length) return;
+      titleEl.textContent = "Potentiel — " + ch.name;
+      render();
+      overlay.classList.add("on");
+    }
+    function close(){ overlay.classList.remove("on"); }
+
+    function render(){
+      const hero = draft.heroes[heroIdx];
+      const details = potentielDetailsOf(hero);
+      const selTier = normalizePotentiel(hero.potentiel).tier;
+      body.innerHTML = "";
+
+      // Boutons de palier — puis T1..T10
+      const head = el("div",{class:"pot-head"},[
+        el("span",{class:"pot-head-lbl", text:"Palier"}),
+        el("span",{class:"pot-head-val", text:"T"+selTier+"/"+POT_MAX})
+      ]);
+      body.appendChild(head);
+
+      const row = el("div",{class:"pot-paliers"});
+      const setTier = tier => {
+        hero.potentiel = normalizePotentiel({ tier });
+        render();
+        renderBuilder();
+      };
+      row.appendChild(el("button",{class:"pot-p"+(selTier===0?" active":""), text:"—",
+        title:"Aucun palier", onclick:()=>setTier(0)}));
+      for(let t=1;t<=POT_MAX;t++){
+        row.appendChild(el("button",{class:"pot-p"+(t<=selTier?" reached":"")+(t===selTier?" active":""),
+          text:"T"+t, onclick:()=>setTier(t)}));
+      }
+      body.appendChild(row);
+
+      if(details.list.length){
+        body.appendChild(el("div",{class:"pot-list-title", text:"Bonus de l'arme équipée"}));
+        const listBox = el("div",{class:"pot-list"});
+        details.list.forEach((desc, idx)=>{
+          const t = idx+1;
+          const item = el("div",{class:"pot-item"+(t<=selTier?" on":"")});
+          item.appendChild(el("span",{class:"pot-item-t", text:"T"+t}));
+          item.appendChild(el("span",{class:"pot-item-d", html:renderBonus(desc)}));
+          listBox.appendChild(item);
+        });
+        body.appendChild(listBox);
+      }else{
+        body.appendChild(el("div",{class:"pot-empty",
+          text:"Équipe une arme compatible pour afficher les bonus de potentiel."}));
+      }
+    }
+
+    $("#potClose").addEventListener("click", close);
+    overlay.addEventListener("click", e=>{ if(e.target===overlay) close(); });
+    document.addEventListener("keydown", e=>{ if(e.key==="Escape" && overlay.classList.contains("on")) close(); });
+    return { open };
+  })();
+  function openPotentiel(i){ Potentiel.open(i); }
+
+  // Actions builder
+  $("#btnNew").addEventListener("click", ()=>{
+    draft = emptyDraft(); editing = false; renderBuilder();
+    toast("Nouvelle équipe prête.");
+  });
+
+  $("#btnSave").addEventListener("click", ()=>{
+    const pseudo = (draft.pseudo||"").trim();
+    if(!pseudo){ toast("Ajoute d'abord un pseudo de membre.", true); pseudoInput.focus(); return; }
+    if(!draft.heroes.some(h=>h.char)){ toast("Ajoute au moins un héros à l'équipe.", true); return; }
+
+    const now = Date.now();
+    const existing = Store.all().find(t=>t.id===draft.id);
+    const team = normalizeTeam(JSON.parse(JSON.stringify(draft)));
+    team.pseudo = pseudo;
+    team.createdAt = existing ? existing.createdAt : now;
+    team.updatedAt = now;
+    Store.upsert(team);
+
+    toast(editing ? "Équipe mise à jour." : "Équipe enregistrée !");
+    draft = emptyDraft(); editing = false; renderBuilder();
+    showView("roster");
+  });
+
+  /* ============================ Roster (page d'affichage) ============================ */
+  const rosterGrid = $("#rosterGrid");
+
+  function renderRoster(){
+    const teams = Store.all().sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+    const c = $("#rosterCount");
+    c.innerHTML = "<b>"+teams.length+"</b> équipe"+(teams.length>1?"s":"")+" enregistrée"+(teams.length>1?"s":"");
+
+    rosterGrid.className = teams.length ? "roster-grid" : "";
+    rosterGrid.innerHTML = "";
+
+    if(!teams.length){
+      rosterGrid.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Aucune équipe pour l'instant"}),
+        el("p",{text:"Va dans « Créer une équipe » pour proposer ta première compo face au Boss de Guilde."})
+      ]));
+      return;
+    }
+    teams.forEach(t=>rosterGrid.appendChild(teamCard(t)));
+  }
+
+  function teamCard(t){
+    const head = el("div",{class:"team-head"},[
+      el("div",{class:"seal", text:initials(t.pseudo)}),
+      el("div",{class:"team-who"},[
+        el("span",{class:"team-pseudo", text:t.pseudo || "Sans pseudo"}),
+        el("span",{class:"team-date", text: t.updatedAt ? new Date(t.updatedAt).toLocaleDateString("fr-FR") : ""})
+      ])
+    ]);
+
+    const heroes = el("div",{class:"team-heroes"});
+    (t.heroes||[]).forEach(h=>heroes.appendChild(miniHero(h)));
+
+    const actions = el("div",{class:"team-actions"},[
+      el("button",{class:"btn", text:"Modifier", onclick:()=>editTeam(t)}),
+      el("button",{class:"btn btn-danger", text:"Supprimer", onclick:()=>deleteTeam(t)})
+    ]);
+
+    return el("div",{class:"team"},[head, heroes, actions]);
+  }
+
+  function miniHero(h){
+    const ch = h && h.char ? charOf(h.char) : null;
+
+    const portrait = el("div",{class:"mini-portrait"});
+    if(ch) portrait.appendChild(el("img",{src:ch.file, alt:ch.name, loading:"lazy"}));
+    else portrait.textContent = "—";
+
+    const name = el("div",{class:"mini-name"+(ch?"":" empty"), text: ch ? ch.name : "Libre"});
+
+    const gearRow = el("div",{class:"mini-gear"});
+    gearRow.appendChild(gearIcon(h && h.weapon, "weapon"));
+    ARMOR_SLOTS.forEach(slot=>gearRow.appendChild(gearIcon(h && h.armor ? h.armor[slot] : null, "")));
+    JEWEL_SLOTS.forEach(slot=>gearRow.appendChild(gearIcon(h && h.jewel ? h.jewel[slot] : null, "jewel")));
+
+    const kids = [portrait, name, gearRow];
+    const p = h && h.potentiel;
+    if(p && p.tier > 0){
+      kids.push(el("div",{class:"mini-pot", title:"Potentiel",
+        text:"✦ Potentiel T"+p.tier}));
+    }
+    if(h && h.note && h.note.trim()){
+      kids.push(el("div",{class:"mini-note", text:h.note.trim()}));
+    }
+    return el("div",{class:"mini"}, kids);
+  }
+
+  function gearIcon(file, variant){
+    const d = el("div",{class:"icn"+(variant?" "+variant:"")+(file?"":" empty")});
+    if(file){ d.style.backgroundImage = "url('"+file.replace(/'/g,"%27")+"')"; d.title = nameOfFile(file); }
+    else d.title = variant==="weapon" ? "Pas d'arme" : "Vide";
+    return d;
+  }
+
+  function editTeam(t){
+    draft = normalizeTeam(JSON.parse(JSON.stringify(t)));
+    editing = true;
+    renderBuilder();
+    showView("builder");
+    toast("Équipe chargée pour modification.");
+  }
+
+  function deleteTeam(t){
+    if(!confirm('Supprimer l\'équipe de « '+(t.pseudo||"?")+' » ?')) return;
+    Store.remove(t.id);
+    renderRoster();
+    toast("Équipe supprimée.");
+  }
+
+  /* ============================ Export / Import ============================ */
+  $("#btnExport").addEventListener("click", ()=>{
+    const data = Store.all();
+    if(!data.length){ toast("Rien à exporter.", true); return; }
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+    const a = el("a",{href:URL.createObjectURL(blob), download:"confrerie7ds-equipes.json"});
+    document.body.appendChild(a); a.click(); a.remove();
+    toast(data.length+" équipe(s) exportée(s).");
+  });
+
+  $("#btnImport").addEventListener("click", ()=>$("#importFile").click());
+  $("#importFile").addEventListener("change", e=>{
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const incoming = JSON.parse(reader.result);
+        if(!Array.isArray(incoming)) throw new Error("format");
+        const list = Store.all();
+        let added=0;
+        incoming.forEach(t=>{
+          if(!t || typeof t!=="object") return;
+          const team = normalizeTeam(Object.assign({}, t, { id:t.id||uid() }));
+          const i = list.findIndex(x=>x.id===team.id);
+          if(i>=0) list[i]=team; else { list.push(team); }
+          added++;
+        });
+        Store.save(list);
+        renderRoster();
+        toast(added+" équipe(s) importée(s).");
+      }catch(err){ toast("Fichier JSON invalide.", true); }
+      e.target.value = "";
+    };
+    reader.readAsText(file);
+  });
+
+  /* ============================ Démarrage ============================ */
+  $("#databar").textContent =
+    (DATA.personnages||[]).length + " héros · " +
+    Object.keys(DATA.armes||{}).length + " types d'armes · " +
+    Object.keys(DATA.armures||{}).length + " emplacements d'armure · " +
+    Object.values(DATA.bijoux||{}).reduce((n,l)=>n+l.length,0) + " bijoux · " +
+    Object.keys(POT).length + " persos avec potentiels" +
+    (DATA.generatedAt ? "  ·  données du "+DATA.generatedAt : "");
+
+  renderBuilder();
+})();
+</script>
+</body>
+</html>

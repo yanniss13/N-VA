@@ -1,0 +1,18 @@
+{
+  "name": "site-confrerie-7ds",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests/potentiel-commun.test.js && node tests/potentiel-commun.playwright.js",
+    "test:unit": "node tests/potentiel-commun.test.js",
+    "test:e2e": "node tests/potentiel-commun.playwright.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}
